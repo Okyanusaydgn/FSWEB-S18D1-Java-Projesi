@@ -2,7 +2,6 @@ package com.workintech.S18D1.controller;
 
 
 import com.workintech.S18D1.dao.BurgerDao;
-import com.workintech.S18D1.dao.BurgerDaoImpl;
 import com.workintech.S18D1.entity.BreadType;
 import com.workintech.S18D1.entity.Burger;
 import com.workintech.S18D1.util.BurgerValidation;
@@ -10,13 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/burger")
 
 public class BurgerController {
 
     private final BurgerDao burgerDao;
+    private long id;
 
 
     @Autowired
@@ -32,22 +32,27 @@ public class BurgerController {
     }
 
     @GetMapping
-    public List<Burger> findAll(){
+    public List<Burger> findAll() {
         return burgerDao.findAll();
     }
 
-    @GetMapping
-    public Burger find(@PathVariable("id") long id) {
+    @GetMapping("/{id}")
+    public Burger getById(@PathVariable long id) {
         return burgerDao.findById(id);
     }
 
-    @PutMapping("/{id}")
-    public Burger update(@RequestBody Burger burger){
-        return  burgerDao.update(burger);
+    @PutMapping
+    public Burger update(@RequestBody Burger burger) {
+        return burgerDao.update(burger);
+    }
+
+    @DeleteMapping("/{id}")
+    public Burger remove(@PathVariable long id) {
+        return burgerDao.remove(id);
     }
 
     @GetMapping("/breadType/{breadType}")
-    public List<Burger> findByBread(@PathVariable("breadType") String breadType){
+    public List<Burger> findByBreadType(@PathVariable String breadType) {
         BreadType bt = BreadType.valueOf(breadType);
         return burgerDao.findByBread(bt);
     }

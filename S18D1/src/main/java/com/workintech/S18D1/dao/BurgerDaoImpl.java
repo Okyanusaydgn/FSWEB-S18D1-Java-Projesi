@@ -18,6 +18,7 @@ public class BurgerDaoImpl implements BurgerDao {
     private final EntityManager entityManager;
     @Autowired
     public BurgerDaoImpl(EntityManager entityManager) {
+
         this.entityManager = entityManager;
     }
 
@@ -42,12 +43,12 @@ public class BurgerDaoImpl implements BurgerDao {
         }
         return burger;
     }
-
+    @Transactional
     @Override
     public Burger update(Burger burger){
         return entityManager.merge(burger);
     }
-
+    @Transactional
     @Override
     public Burger remove(long id) {
         Burger foundBurger = findById(id);
@@ -57,21 +58,21 @@ public class BurgerDaoImpl implements BurgerDao {
 
     @Override
     public List<Burger> findByPrice(Integer price) {
-        TypedQuery<Burger> query =  entityManager.createQuery("SELECT b FROM Burger b.price > :price ORDER BY b.price desc", Burger.class);
-        query.setParameter("price",price); // bunu yukarıdaki ":price" yazan kısım temsil ediyor. iki nokta (:) price yaparak dışarıdan değer alıyor.
+        TypedQuery<Burger> query = entityManager.createQuery("SELECT b FROM Burger b WHERE b.price > :price ORDER BY b.price DESC", Burger.class);
+        query.setParameter("price", price);
         return query.getResultList();
     }
 
     @Override
     public List<Burger> findByBread(BreadType breadType) {
-        TypedQuery<Burger> query = entityManager.createQuery("SELECT b FROM Burger b where b.breadType > :breadType ORDER BY b.name desc",Burger.class);
-        query.setParameter("breadType",breadType);
+        TypedQuery<Burger> query = entityManager.createQuery("SELECT b FROM Burger b WHERE b.breadType = :breadType ORDER BY b.name DESC", Burger.class);
+        query.setParameter("breadType", breadType);
         return query.getResultList();
     }
 
     @Override
     public List<Burger> findByContent(String content) {
-        TypedQuery<Burger> query = entityManager.createQuery("SELECT b FROM Burger b where b.contents LIKE CONCAT('%', :concent, '%') ORDER BY b.name", Burger.class);
+        TypedQuery<Burger> query = entityManager.createQuery("SELECT b FROM Burger b where b.contents LIKE CONCAT('%', :content, '%') ORDER BY b.name", Burger.class);
         query.setParameter("content",content);
         return query.getResultList();
     }
